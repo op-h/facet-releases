@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Join on Facet</title>
+<style>
+  :root { --bg:#F4EFE6; --card:#FBF8F2; --fg:#1F1B16; --muted:#6B6257; --line:#D6CDBF; --accent:#C2412D; --on:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161412; --card:#1B1916; --fg:#EDE6DA; --muted:#A39A8E; --line:#3A352F; --accent:#E8705A; --on:#1A0A06; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:440px; margin:0 auto; padding:48px 20px; display:flex; flex-direction:column; gap:18px; }
+  .mark { display:flex; align-items:center; gap:10px; font-family:Georgia,"Times New Roman",serif; font-size:30px; }
+  h1 { font-family:Georgia,"Times New Roman",serif; font-weight:400; font-size:28px; line-height:1.2; margin:8px 0 0; }
+  p { margin:0; color:var(--muted); }
+  .btn { display:block; text-align:center; text-decoration:none; font-weight:600; padding:14px 18px; border-radius:8px; border:1px solid var(--line); color:var(--fg); background:transparent; font-size:16px; cursor:pointer; width:100%; }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:var(--on); }
+  ol { margin:0; padding-left:20px; color:var(--muted); display:flex; flex-direction:column; gap:6px; }
+  code { display:block; padding:12px; border:1px solid var(--line); border-radius:8px; background:var(--card); font-size:13px; word-break:break-all; color:var(--fg); }
+  .small { font-size:14px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark">
+    <svg viewBox="30 34 48 44" width="34" height="34" aria-hidden="true"><path fill="#C2412D" d="M42,38 L66,38 L76,48 L54,74 L32,48 Z"/><path fill="#DB6A55" d="M42,38 L66,38 L61,48 L47,48 Z"/><path fill="none" stroke="#F4EFE6" stroke-width="1.6" stroke-linejoin="round" d="M32,48 L76,48 M42,38 L47,48 L54,38 L61,48 L66,38 M47,48 L54,74 L61,48"/></svg>
+    facet
+  </div>
+
+  <section id="ok" hidden>
+    <h1>Your partner invited you to share a canvas</h1>
+    <p style="margin-top:10px">Tap the button and Facet opens with their code filled in.</p>
+  </section>
+  <a id="open" class="btn primary" hidden>Open in Facet</a>
+
+  <section id="steps" hidden>
+    <p class="small" style="margin-bottom:8px"><b>Don't have Facet yet?</b></p>
+    <ol class="small">
+      <li><a href="https://github.com/op-h/facet-releases/releases/latest">Download the latest APK</a> and install it.</li>
+      <li>Come back to this message and tap the link again.</li>
+    </ol>
+  </section>
+
+  <section id="manual" hidden>
+    <p class="small" style="margin-bottom:8px">If the button doesn't open Facet, copy the code and paste it on Facet's pairing screen.</p>
+    <code id="code"></code>
+    <button id="copy" class="btn" style="margin-top:10px">Copy code</button>
+  </section>
+
+  <section id="bad" hidden>
+    <h1>This link is missing its code</h1>
+    <p style="margin-top:10px">Ask your partner to send the link again from Facet: Create a code, then Send link.</p>
+  </section>
+
+  <p class="small" id="desk" hidden>Open this link on your Android phone.</p>
+  <p class="small">The code stays in your browser. It isn't sent to this website.</p>
+</main>
+<script>
+  const code = decodeURIComponent(location.hash.slice(1)).trim();
+  const valid = /^FACET1-[A-Za-z0-9_-]{43}$/.test(code);
+  const $ = id => document.getElementById(id);
+  if (!valid) { $('bad').hidden = false; }
+  else {
+    $('ok').hidden = $('steps').hidden = $('manual').hidden = false;
+    $('code').textContent = code;
+    const android = /Android/i.test(navigator.userAgent);
+    if (android) {
+      const fallback = encodeURIComponent('https://github.com/op-h/facet-releases/releases/latest');
+      $('open').href = 'intent://pair?c=' + code + '#Intent;scheme=facet;package=app.facet;S.browser_fallback_url=' + fallback + ';end';
+      $('open').hidden = false;
+    } else {
+      $('desk').hidden = false;
+    }
+    $('copy').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(code); $('copy').textContent = 'Copied'; }
+      catch { const r = document.createRange(); r.selectNodeContents($('code')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    });
+  }
+</script>
+</body>
+</html>
