@@ -32,8 +32,8 @@
 ## Install
 
 1. On each phone, download **`facet-*.apk`** from the [latest release](https://github.com/op-h/facet-releases/releases/latest) and open it. Android will ask you to allow installs from your browser or file manager.
-2. On the first phone, tap **Create a code** and send the code (or the QR picture) to your partner in a private chat.
-3. On the second phone, paste the code, scan the QR, or pick a screenshot of it.
+2. On the first phone, tap **Create a code**, then **Send link** and send it to your partner in a private chat.
+3. On the second phone, tap the link and then **Open in Facet**. Facet opens with the code filled in. If you're together, scanning the QR code works too.
 4. Check that both phones show the same five symbols.
 
 On Samsung phones, set Settings → Apps → Facet → Battery to **Unrestricted**. Otherwise One UI can stop Facet in the background and new drawings arrive late.
